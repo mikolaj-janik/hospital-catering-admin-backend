@@ -1,5 +1,6 @@
 package com.mikolajjanik.hospital_catering_admin.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,11 @@ public class Diet {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "diet")
+    @JsonIgnore
     private Set<Meal> meals = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diet")
+    @JsonIgnore
+    private Set<Patient> patients = new HashSet<>();
 
 }

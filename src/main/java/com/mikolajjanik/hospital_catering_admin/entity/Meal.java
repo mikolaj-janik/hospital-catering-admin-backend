@@ -44,5 +44,5 @@ public class Meal {
     private Double fats;
 
     @Column(name = "obraz")
-    private byte[] image;
+    private String image;
 }

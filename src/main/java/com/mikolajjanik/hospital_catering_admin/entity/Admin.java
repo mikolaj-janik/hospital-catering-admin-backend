@@ -1,5 +1,6 @@
 package com.mikolajjanik.hospital_catering_admin.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Admin {
     private String email;
 
     @Column(name = "hasło")
+    @JsonIgnore
     private String password;
 
     @Column(name = "imię")
