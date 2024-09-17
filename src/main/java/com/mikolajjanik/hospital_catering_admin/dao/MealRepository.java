@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 public interface MealRepository extends JpaRepository<Meal, Long> {
     Page<Meal> findMealsByDietId(Long id, Pageable pageable);
-    Page<Meal> findMealsByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Meal> findMealsByDietIdAndNameContainingIgnoreCase(Long id, String name, Pageable pageable);
 }

@@ -45,4 +45,16 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMealNotFoundException(AdminNotFoundException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PasswordsNotMatchException.class)
+    public ResponseEntity<ErrorResponse> handleMealNotFoundException(PasswordsNotMatchException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
 }

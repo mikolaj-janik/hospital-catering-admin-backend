@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface MealService {
     Page<Meal> findMealsByDietId(Long id, Pageable pageable);
+    Page<Meal> findMealsByDietIdAndName(Long id, String name, Pageable pageable);
 }

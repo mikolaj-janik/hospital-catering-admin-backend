@@ -44,4 +44,11 @@ public class DietController {
     public Page<Meal> getMealsByDietId(@PathVariable("id") Long id, Pageable pageable) {
         return mealService.findMealsByDietId(id, pageable);
     }
+
+    @GetMapping("/{id}/meals/{name}")
+    public Page<Meal> getMealsByDietAndByName(@PathVariable("id") Long id,
+                                              @PathVariable("name") String name,
+                                              Pageable pageable) {
+        return mealService.findMealsByDietIdAndName(id, name, pageable);
+    }
 }

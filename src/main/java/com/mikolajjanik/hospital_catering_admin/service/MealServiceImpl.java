@@ -31,4 +31,16 @@ public class MealServiceImpl implements MealService {
 
         return mealRepository.findMealsByDietId(id, pageable);
     }
+
+    @Override
+    @SneakyThrows
+    public Page<Meal> findMealsByDietIdAndName(Long id, String name, Pageable pageable) {
+        Diet diet = dietRepository.findDietById(id);
+
+        if (diet == null) {
+            throw new DietNotFoundException(id);
+        }
+
+        return mealRepository.findMealsByDietIdAndNameContainingIgnoreCase(id, name, pageable);
+    }
 }
