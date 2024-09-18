@@ -1,6 +1,8 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
+import com.mikolajjanik.hospital_catering_admin.dto.LoginUserDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewUserDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.TokenDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Admin;
 import com.mikolajjanik.hospital_catering_admin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +26,13 @@ public class UserController {
     public ResponseEntity<Admin> register(@RequestBody NewUserDTO user) {
         Admin admin = userService.register(user);
         return new ResponseEntity<>(admin, HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginUserDTO user) {
+        TokenDTO tokenDTO = new TokenDTO();
+        String token = userService.verify(user);
+        tokenDTO.setToken(token);
+        return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
     }
 }

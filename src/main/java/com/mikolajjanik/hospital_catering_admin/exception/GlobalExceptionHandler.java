@@ -57,4 +57,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(BadLoginCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadLoginCredentialsException(BadLoginCredentialsException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.UNAUTHORIZED);
+    }
 }
