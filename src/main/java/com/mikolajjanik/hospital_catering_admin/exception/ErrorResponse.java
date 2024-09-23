@@ -13,4 +13,12 @@ public class ErrorResponse {
         this.message = message;
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"message\": "  + "\"" + message + "\"," +
+                "\"status\": " + status +
+                "}";
+    }
 }

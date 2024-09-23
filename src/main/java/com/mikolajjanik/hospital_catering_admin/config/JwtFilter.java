@@ -1,7 +1,8 @@
 package com.mikolajjanik.hospital_catering_admin.config;
 
-import com.mikolajjanik.hospital_catering_admin.exception.TokenExpiredException;
+import com.mikolajjanik.hospital_catering_admin.exception.ErrorResponse;
 import com.mikolajjanik.hospital_catering_admin.exception.TokenNotFoundException;
+import com.mikolajjanik.hospital_catering_admin.exception.UnauthenticatedException;
 import com.mikolajjanik.hospital_catering_admin.service.JWTService;
 import com.mikolajjanik.hospital_catering_admin.service.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -40,23 +41,39 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            username = service.extractUserName(token);
-        }
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
-
-            if (service.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7);
+                username = service.extractUserName(token);
+            } else if (!(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/register"))) {
+                if (authHeader == null) {
+                    throw new TokenNotFoundException();
+                } else {
+                    throw new UnauthenticatedException();
+                }
             }
 
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+
+                if (service.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+
+            }
+            filterChain.doFilter(request, response);
+
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(errorResponse.toString());
         }
-        filterChain.doFilter(request, response);
     }
 }
