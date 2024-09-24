@@ -1,10 +1,12 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
+import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import com.mikolajjanik.hospital_catering_admin.service.DieticianService;
 import com.mikolajjanik.hospital_catering_admin.service.WardService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import com.mikolajjanik.hospital_catering_admin.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 import java.util.Stack;
@@ -67,6 +66,14 @@ public class HospitalController {
     public ResponseEntity<Set<Dietician>> getDieticiansByHospitalId(@PathVariable("id") Long id) {
         Set<Dietician> dieticians = dieticianService.findDieticiansByHospitalId(id);
         return new ResponseEntity<>(dieticians, HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    @ResponseBody
+    public ResponseEntity<Hospital> newHospital(@Valid @RequestBody HospitalDTO hospitalDTO) {
+        Hospital hospital = new Hospital();
+
+        return new ResponseEntity<>(hospital, HttpStatus.CREATED);
     }
 
 }

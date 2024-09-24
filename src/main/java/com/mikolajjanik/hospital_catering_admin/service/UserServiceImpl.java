@@ -6,6 +6,7 @@ import com.mikolajjanik.hospital_catering_admin.dto.NewUserDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Admin;
 import com.mikolajjanik.hospital_catering_admin.exception.BadLoginCredentialsException;
 import com.mikolajjanik.hospital_catering_admin.exception.PasswordsNotMatchException;
+import com.mikolajjanik.hospital_catering_admin.exception.UserAlreadyExistException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @SneakyThrows
     public Admin register(NewUserDTO user) {
+        String email = user.getEmail();
+        Admin a = adminRepository.findAdminByEmail(email);
+
+        if (a != null) {
+            throw new UserAlreadyExistException();
+        }
+
         String password = user.getPassword();
         String repeatedPassword = user.getRepeatedPassword();
 

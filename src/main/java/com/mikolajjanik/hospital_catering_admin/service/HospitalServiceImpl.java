@@ -1,6 +1,7 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
 import com.mikolajjanik.hospital_catering_admin.dao.HospitalRepository;
+import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.exception.HospitalNotFoundException;
 import lombok.SneakyThrows;
@@ -39,5 +40,11 @@ public class HospitalServiceImpl implements HospitalService {
         }
 
         return hospital;
+    }
+
+    @Override
+    @SneakyThrows
+    public Hospital addHospital(HospitalDTO hospitalDTO) {
+        return null;
     }
 }

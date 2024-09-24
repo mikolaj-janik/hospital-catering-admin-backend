@@ -5,6 +5,7 @@ import com.mikolajjanik.hospital_catering_admin.dto.NewUserDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.TokenDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Admin;
 import com.mikolajjanik.hospital_catering_admin.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ public class UserController {
         this.userService = userService;
     }
     @PostMapping("/register")
-    public ResponseEntity<Admin> register(@RequestBody NewUserDTO user) {
+    public ResponseEntity<Admin> register(@Valid @RequestBody NewUserDTO user) {
         Admin admin = userService.register(user);
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginUserDTO user) {
+    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginUserDTO user) {
         TokenDTO tokenDTO = new TokenDTO();
         String token = userService.verify(user);
         tokenDTO.setToken(token);

@@ -3,6 +3,7 @@ package com.mikolajjanik.hospital_catering_admin.exception;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PasswordsNotMatchException.class)
-    public ResponseEntity<ErrorResponse> handleMealNotFoundException(PasswordsNotMatchException e) {
+    public ResponseEntity<ErrorResponse> handlePasswordsNotMatchException(PasswordsNotMatchException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
     }
@@ -57,6 +58,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadLoginCredentialsException(BadLoginCredentialsException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistException(UserAlreadyExistException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.CONFLICT);
     }
 
 }

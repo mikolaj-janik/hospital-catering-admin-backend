@@ -5,6 +5,7 @@ import com.mikolajjanik.hospital_catering_admin.exception.TokenNotFoundException
 import com.mikolajjanik.hospital_catering_admin.exception.UnauthenticatedException;
 import com.mikolajjanik.hospital_catering_admin.service.JWTService;
 import com.mikolajjanik.hospital_catering_admin.service.MyUserDetailsService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -20,13 +22,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private JWTService service;
+    private final JWTService service;
 
-    private ApplicationContext context;
+    private final ApplicationContext context;
 
     @Autowired
     public JwtFilter(JWTService service, ApplicationContext context) {
@@ -71,9 +74,12 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(errorResponse.toString());
+            handleException(e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED, response);
         }
+    }
+    private void handleException(String message, int code, HttpServletResponse response) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(message, code);
+        response.setStatus(code);
+        response.getWriter().write(errorResponse.toString());
     }
 }
