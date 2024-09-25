@@ -45,6 +45,15 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     @SneakyThrows
     public Hospital addHospital(HospitalDTO hospitalDTO) {
-        return null;
+        Hospital hospital = new Hospital();
+
+        hospital.setName(hospitalDTO.getName());
+        hospital.setPhoneNumber(hospitalDTO.getPhoneNumber());
+        hospital.setStreet(hospitalDTO.getStreet());
+        hospital.setBuildingNo(hospitalDTO.getBuildingNo());
+        hospital.setZipCode(hospitalDTO.getZipCode());
+        hospital.setCity(hospitalDTO.getCity());
+
+        return hospitalRepository.save(hospital);
     }
 }

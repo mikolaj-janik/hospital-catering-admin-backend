@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class LoginUserDTO {
 
-    @NotNull(message = "Email address cannot be null.")
-    @NotBlank(message = "Email address cannot be blank.")
-    @Email(message = "Provided string is not an email.")
+    @NotNull(message = "Field 'email' cannot be null.")
+    @NotBlank(message = "Field 'email' cannot be empty.")
+    @Email(message = "Field 'email': Provided string is not an email.")
     private String email;
 
-    @NotNull(message = "Password cannot be null")
-    @NotBlank(message = "Password cannot be blank")
+    @NotNull(message = "Field 'password' cannot be null.")
+    @NotBlank(message = "Field 'password' cannot be empty.")
     private String password;
 
 }

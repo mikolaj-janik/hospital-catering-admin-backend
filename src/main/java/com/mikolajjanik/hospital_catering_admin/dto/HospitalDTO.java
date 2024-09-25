@@ -9,20 +9,28 @@ import lombok.Data;
 @Data
 public class HospitalDTO {
 
-    @NotBlank(message = "Name is required.")
+    @NotBlank(message = "Field 'name' cannot be empty.")
+    @NotNull(message = "Field 'name' cannot be null.")
     private String name;
 
-    @NotBlank(message = "Phone number is required.")
+    @NotBlank(message = "Field 'phoneNumber' cannot be empty.")
+    @NotNull(message = "Field 'phoneNumber' cannot be null.")
     private String phoneNumber;
 
-    @NotBlank(message = "Street is required.")
+    @NotBlank(message = "Field 'street' cannot be empty.")
+    @NotNull(message = "Field 'street' cannot be null.")
     private String street;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "Field 'buildingNo' cannot be empty.")
+    @Min(value = 1, message = "Field 'buildingNo' must be greater than 0.")
     private int buildingNo;
 
-    @Pattern(regexp = "[0-9]{2}-[0-9]{3}")
+    @NotNull(message = "Field 'zipCode' cannot be null.")
+    @Pattern(regexp = "[0-9]{2}-[0-9]{3}", message = "Field 'zipCode' must match the pattern: XX-XXX")
     private String zipCode;
+
+    @NotBlank(message = "Field 'city' cannot be empty.")
+    @NotNull(message = "Field 'city' cannot be null.")
+    private String city;
 
 }

@@ -71,8 +71,7 @@ public class HospitalController {
     @PostMapping("")
     @ResponseBody
     public ResponseEntity<Hospital> newHospital(@Valid @RequestBody HospitalDTO hospitalDTO) {
-        Hospital hospital = new Hospital();
-
+        Hospital hospital = hospitalService.addHospital(hospitalDTO);
         return new ResponseEntity<>(hospital, HttpStatus.CREATED);
     }
 

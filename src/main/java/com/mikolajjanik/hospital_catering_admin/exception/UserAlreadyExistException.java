@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public class UserAlreadyExistException extends IOException {
     public UserAlreadyExistException() {
-        super("User with provided email already exist");
+        super("User with provided email address already exist");
     }
 }
