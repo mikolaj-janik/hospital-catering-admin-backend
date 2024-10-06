@@ -1,6 +1,9 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
+import com.mikolajjanik.hospital_catering_admin.dto.TokenDTO;
+import com.mikolajjanik.hospital_catering_admin.exception.TokenNotExpiredException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,6 +23,8 @@ import java.util.function.Function;
 public class JWTServiceImpl implements JWTService {
 
     private String secretKey = "";
+
+    private long tokenExpiration = 1000 * 60 * 60; //1000 * 60 * 60 * 12;
 
     public JWTServiceImpl() {
         try {
@@ -41,10 +46,42 @@ public class JWTServiceImpl implements JWTService {
                 .add(claims)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
+                .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
                 .and()
                 .signWith(getKey())
                 .compact();
+    }
+
+    @Override
+    @SneakyThrows
+    public TokenDTO refreshToken(TokenDTO tokenBody) {
+        String token = tokenBody.getToken();
+        Claims claims;
+
+        try {
+            if (!isTokenExpired(token)) {
+                throw new TokenNotExpiredException();
+            }
+           claims = extractAllClaims(token);
+        } catch(ExpiredJwtException e) {
+            claims = e.getClaims();
+        }
+
+        String email = claims.getSubject();
+        TokenDTO tokenDTO = new TokenDTO();
+
+        Map<String, Object> refreshedClaims = new HashMap<>(claims);
+
+        String refreshedToken = Jwts.builder()
+                .claims(refreshedClaims)
+                .subject(email)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + tokenExpiration))
+                .signWith(getKey())
+                .compact();
+
+        tokenDTO.setToken(refreshedToken);
+        return tokenDTO;
     }
 
     @Override

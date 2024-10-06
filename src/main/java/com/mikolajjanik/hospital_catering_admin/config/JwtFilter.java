@@ -23,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -30,6 +31,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JWTService service;
 
     private final ApplicationContext context;
+
+    private final List<String> excludeUrls = List.of("/api/register", "/api/login", "/api/refresh");
 
     @Autowired
     public JwtFilter(JWTService service, ApplicationContext context) {
@@ -43,6 +46,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
+        String path = request.getServletPath();
+
+        if (excludeUrls.contains(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
