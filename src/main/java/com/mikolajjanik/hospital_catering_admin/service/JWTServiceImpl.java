@@ -23,8 +23,7 @@ import java.util.function.Function;
 public class JWTServiceImpl implements JWTService {
 
     private String secretKey = "";
-
-    private long tokenExpiration = 1000 * 60 * 60; //1000 * 60 * 60 * 12;
+    private final long tokenExpiration = 1000 * 60 * 60 * 2; //1000 * 60 * 60 * 2 - two hours
 
     public JWTServiceImpl() {
         try {
