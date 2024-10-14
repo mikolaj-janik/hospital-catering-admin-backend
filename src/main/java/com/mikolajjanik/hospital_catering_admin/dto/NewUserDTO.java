@@ -28,4 +28,8 @@ public class NewUserDTO {
     @NotBlank(message = "Field 'surname' cannot be empty.")
     private String surname;
 
+    @NotNull(message = "Field 'profilePicture' cannot be null.")
+    @NotBlank(message = "Field 'profilePicture' cannot be empty.")
+    private String profilePicture;
+
 }

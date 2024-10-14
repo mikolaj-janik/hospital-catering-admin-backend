@@ -28,4 +28,5 @@ public class Admin {
 
     @Column(name = "nazwisko")
     private String surname;
+
 }
