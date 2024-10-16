@@ -2,13 +2,19 @@ package com.mikolajjanik.hospital_catering_admin.service;
 
 import com.mikolajjanik.hospital_catering_admin.dao.HospitalRepository;
 import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.NewHospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.exception.HospitalNotFoundException;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Service
 public class HospitalServiceImpl implements HospitalService {
@@ -21,8 +27,28 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
-    public Page<Hospital> findAll(Pageable pageable) {
-        return hospitalRepository.findAllBy(pageable);
+    public Page<HospitalDTO> findAll(Pageable pageable) {
+        Page<Hospital> hospitals = hospitalRepository.findAll(pageable);
+        List<HospitalDTO> hospitalsList = new ArrayList<>();
+
+        for(Hospital hospital : hospitals.getContent()) {
+
+            byte[] rawPicture = hospitalRepository.findPictureById(hospital.getId());
+            HospitalDTO hospitalDTO = new HospitalDTO(
+                    hospital.getId(),
+                    hospital.getName(),
+                    hospital.getPhoneNumber(),
+                    hospital.getStreet(),
+                    hospital.getBuildingNo(),
+                    hospital.getZipCode(),
+                    hospital.getCity(),
+                    Base64.getEncoder().encodeToString(rawPicture)
+            );
+
+            hospitalsList.add(hospitalDTO);
+        }
+
+        return new PageImpl<>(hospitalsList, pageable, hospitalsList.size());
     }
 
     @Override
@@ -44,15 +70,15 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     @SneakyThrows
-    public Hospital addHospital(HospitalDTO hospitalDTO) {
+    public Hospital addHospital(NewHospitalDTO newHospitalDTO) {
         Hospital hospital = new Hospital();
 
-        hospital.setName(hospitalDTO.getName());
-        hospital.setPhoneNumber(hospitalDTO.getPhoneNumber());
-        hospital.setStreet(hospitalDTO.getStreet());
-        hospital.setBuildingNo(hospitalDTO.getBuildingNo());
-        hospital.setZipCode(hospitalDTO.getZipCode());
-        hospital.setCity(hospitalDTO.getCity());
+        hospital.setName(newHospitalDTO.getName());
+        hospital.setPhoneNumber(newHospitalDTO.getPhoneNumber());
+        hospital.setStreet(newHospitalDTO.getStreet());
+        hospital.setBuildingNo(newHospitalDTO.getBuildingNo());
+        hospital.setZipCode(newHospitalDTO.getZipCode());
+        hospital.setCity(newHospitalDTO.getCity());
 
         return hospitalRepository.save(hospital);
     }

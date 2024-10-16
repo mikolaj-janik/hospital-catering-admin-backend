@@ -1,24 +1,22 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
 import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.NewHospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import com.mikolajjanik.hospital_catering_admin.service.DieticianService;
 import com.mikolajjanik.hospital_catering_admin.service.WardService;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Pageable;
 import com.mikolajjanik.hospital_catering_admin.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
-import java.util.Stack;
 
 @RestController
 @RequestMapping("/api/hospitals")
@@ -35,12 +33,12 @@ public class HospitalController {
     }
 
     @GetMapping("")
-    public Page<Hospital> getAll(Pageable pageable) {
+    public Page<HospitalDTO> getAll(Pageable pageable) {
         return hospitalService.findAll(pageable);
     }
 
-    @GetMapping("/search/{name}")
-    public Page<Hospital> getHospitalsByName(@PathVariable("name") String name, Pageable pageable) {
+    @GetMapping("/search")
+    public Page<Hospital> getHospitalsByName(@RequestParam("name") String name, Pageable pageable) {
         return hospitalService.findByNameContaining(name, pageable);
     }
 
@@ -70,8 +68,8 @@ public class HospitalController {
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<Hospital> newHospital(@Valid @RequestBody HospitalDTO hospitalDTO) {
-        Hospital hospital = hospitalService.addHospital(hospitalDTO);
+    public ResponseEntity<Hospital> newHospital(@Valid @RequestBody NewHospitalDTO newHospitalDTO) {
+        Hospital hospital = hospitalService.addHospital(newHospitalDTO);
         return new ResponseEntity<>(hospital, HttpStatus.CREATED);
     }
 
