@@ -38,13 +38,13 @@ public class HospitalController {
     }
 
     @GetMapping("/search")
-    public Page<Hospital> getHospitalsByName(@RequestParam("name") String name, Pageable pageable) {
+    public Page<HospitalDTO> getHospitalsByName(@RequestParam("name") String name, Pageable pageable) {
         return hospitalService.findByNameContaining(name, pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Hospital> getHospitalById(@PathVariable("id") Long id) {
-        Hospital hospital = hospitalService.findHospitalById(id);
+    public ResponseEntity<HospitalDTO> getHospitalById(@PathVariable("id") Long id) {
+        HospitalDTO hospital = hospitalService.findHospitalById(id);
         return new ResponseEntity<>(hospital, HttpStatus.OK);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 
 public interface HospitalService {
     Page<HospitalDTO> findAll(Pageable pageable);
-    Page<Hospital> findByNameContaining(String name, Pageable pageable);
-    Hospital findHospitalById(Long id);
+    Page<HospitalDTO> findByNameContaining(String name, Pageable pageable);
+    HospitalDTO findHospitalById(Long id);
     Hospital addHospital(NewHospitalDTO newHospitalDTO);
 }

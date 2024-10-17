@@ -29,6 +29,55 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public Page<HospitalDTO> findAll(Pageable pageable) {
         Page<Hospital> hospitals = hospitalRepository.findAll(pageable);
+        return handleFindHospitals(hospitals, pageable);
+    }
+
+    @Override
+    public Page<HospitalDTO> findByNameContaining(String name, Pageable pageable) {
+        Page<Hospital> hospitals = hospitalRepository.findByNameContainingIgnoreCase(name, pageable);
+        return handleFindHospitals(hospitals, pageable);
+    }
+
+    @Override
+    @SneakyThrows
+    public HospitalDTO findHospitalById(Long id) {
+        Hospital hospital = hospitalRepository.findHospitalById(id);
+
+        if (hospital == null) {
+            throw new HospitalNotFoundException(id);
+        }
+
+        byte[] rawPicture = hospitalRepository.findPictureById(id);
+
+        HospitalDTO hospitalDTO = new HospitalDTO(
+          hospital.getId(),
+          hospital.getName(),
+          hospital.getPhoneNumber(),
+          hospital.getStreet(),
+          hospital.getBuildingNo(),
+          hospital.getZipCode(),
+          hospital.getCity(),
+          Base64.getEncoder().encodeToString(rawPicture)
+        );
+
+        return hospitalDTO;
+    }
+
+    @Override
+    @SneakyThrows
+    public Hospital addHospital(NewHospitalDTO newHospitalDTO) {
+        Hospital hospital = new Hospital();
+
+        hospital.setName(newHospitalDTO.getName());
+        hospital.setPhoneNumber(newHospitalDTO.getPhoneNumber());
+        hospital.setStreet(newHospitalDTO.getStreet());
+        hospital.setBuildingNo(newHospitalDTO.getBuildingNo());
+        hospital.setZipCode(newHospitalDTO.getZipCode());
+        hospital.setCity(newHospitalDTO.getCity());
+
+        return hospitalRepository.save(hospital);
+    }
+    private Page<HospitalDTO> handleFindHospitals(Page<Hospital> hospitals, Pageable pageable) {
         List<HospitalDTO> hospitalsList = new ArrayList<>();
 
         for(Hospital hospital : hospitals.getContent()) {
@@ -49,37 +98,5 @@ public class HospitalServiceImpl implements HospitalService {
         }
 
         return new PageImpl<>(hospitalsList, pageable, hospitalsList.size());
-    }
-
-    @Override
-    public Page<Hospital> findByNameContaining(String name, Pageable pageable) {
-        return hospitalRepository.findByNameContainingIgnoreCase(name, pageable);
-    }
-
-    @Override
-    @SneakyThrows
-    public Hospital findHospitalById(Long id) {
-        Hospital hospital = hospitalRepository.findHospitalById(id);
-
-        if (hospital == null) {
-            throw new HospitalNotFoundException(id);
-        }
-
-        return hospital;
-    }
-
-    @Override
-    @SneakyThrows
-    public Hospital addHospital(NewHospitalDTO newHospitalDTO) {
-        Hospital hospital = new Hospital();
-
-        hospital.setName(newHospitalDTO.getName());
-        hospital.setPhoneNumber(newHospitalDTO.getPhoneNumber());
-        hospital.setStreet(newHospitalDTO.getStreet());
-        hospital.setBuildingNo(newHospitalDTO.getBuildingNo());
-        hospital.setZipCode(newHospitalDTO.getZipCode());
-        hospital.setCity(newHospitalDTO.getCity());
-
-        return hospitalRepository.save(hospital);
     }
 }
