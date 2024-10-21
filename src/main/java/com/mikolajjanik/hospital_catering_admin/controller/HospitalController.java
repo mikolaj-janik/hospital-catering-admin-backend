@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -66,10 +67,11 @@ public class HospitalController {
         return new ResponseEntity<>(dieticians, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping("/add")
     @ResponseBody
-    public ResponseEntity<Hospital> newHospital(@Valid @RequestBody NewHospitalDTO newHospitalDTO) {
-        Hospital hospital = hospitalService.addHospital(newHospitalDTO);
+    public ResponseEntity<HospitalDTO> newHospital(@Valid @ModelAttribute NewHospitalDTO newHospitalDTO,
+                                                @RequestPart("picture") MultipartFile picture) {
+        HospitalDTO hospital = hospitalService.addHospital(newHospitalDTO, picture);
         return new ResponseEntity<>(hospital, HttpStatus.CREATED);
     }
 

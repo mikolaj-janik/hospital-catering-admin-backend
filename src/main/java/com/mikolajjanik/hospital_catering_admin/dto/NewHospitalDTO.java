@@ -22,8 +22,7 @@ public class NewHospitalDTO {
     private String street;
 
     @NotNull(message = "Field 'buildingNo' cannot be empty.")
-    @Min(value = 1, message = "Field 'buildingNo' must be greater than 0.")
-    private int buildingNo;
+    private String buildingNo;
 
     @NotNull(message = "Field 'zipCode' cannot be null.")
     @Pattern(regexp = "[0-9]{2}-[0-9]{3}", message = "Field 'zipCode' must match the pattern: XX-XXX")

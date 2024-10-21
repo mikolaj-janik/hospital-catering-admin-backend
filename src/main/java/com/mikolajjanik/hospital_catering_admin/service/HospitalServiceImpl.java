@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -65,17 +67,31 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     @SneakyThrows
-    public Hospital addHospital(NewHospitalDTO newHospitalDTO) {
+    public HospitalDTO addHospital(NewHospitalDTO newHospitalDTO, MultipartFile picture) {
         Hospital hospital = new Hospital();
+        validateImageFormat(picture);
 
         hospital.setName(newHospitalDTO.getName());
         hospital.setPhoneNumber(newHospitalDTO.getPhoneNumber());
         hospital.setStreet(newHospitalDTO.getStreet());
-        hospital.setBuildingNo(newHospitalDTO.getBuildingNo());
+        hospital.setBuildingNo(Integer.parseInt(newHospitalDTO.getBuildingNo()));
         hospital.setZipCode(newHospitalDTO.getZipCode());
         hospital.setCity(newHospitalDTO.getCity());
 
-        return hospitalRepository.save(hospital);
+        hospital = hospitalRepository.save(hospital);
+        byte [] pictureByte = picture.getBytes();
+        hospitalRepository.updatePictureByHospitalId(hospital.getId(), pictureByte);
+
+        return new HospitalDTO(
+                hospital.getId(),
+                hospital.getName(),
+                hospital.getPhoneNumber(),
+                hospital.getStreet(),
+                hospital.getBuildingNo(),
+                hospital.getZipCode(),
+                hospital.getCity(),
+                Base64.getEncoder().encodeToString(pictureByte)
+        );
     }
     private Page<HospitalDTO> handleFindHospitals(Page<Hospital> hospitals, Pageable pageable) {
         List<HospitalDTO> hospitalsList = new ArrayList<>();
@@ -98,5 +114,20 @@ public class HospitalServiceImpl implements HospitalService {
         }
 
         return new PageImpl<>(hospitalsList, pageable, hospitalsList.size());
+    }
+
+    private void validateImageFormat(MultipartFile file) {
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null &&
+                !originalFilename.toLowerCase().matches(".*\\.(jpg|jpeg|png)$")) {
+            throw new IllegalArgumentException("Invalid file format. Allowed formats: jpg, jpeg, png.");
+        }
+
+        String mimeType = file.getContentType();
+        if (mimeType == null ||
+                !(mimeType.equals("image/jpeg") || mimeType.equals("image/png"))) {
+            throw new IllegalArgumentException("Invalid MIME type. Allowed types: image/jpeg, image/png.");
+        }
     }
 }
