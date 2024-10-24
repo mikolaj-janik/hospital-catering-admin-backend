@@ -1,18 +1,20 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
+import com.mikolajjanik.hospital_catering_admin.dto.DietDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.NewHospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.service.DietService;
 import com.mikolajjanik.hospital_catering_admin.service.MealService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -50,5 +52,12 @@ public class DietController {
                                               @PathVariable("name") String name,
                                               Pageable pageable) {
         return mealService.findMealsByDietIdAndName(id, name, pageable);
+    }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public ResponseEntity<Diet> newDiet(@Valid @RequestBody DietDTO dietDTO) {
+        Diet diet = dietService.addDiet(dietDTO);
+        return new ResponseEntity<>(diet, HttpStatus.CREATED);
     }
 }

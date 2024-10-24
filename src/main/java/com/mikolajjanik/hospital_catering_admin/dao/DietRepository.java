@@ -7,5 +7,7 @@ import java.util.Set;
 
 public interface DietRepository extends JpaRepository<Diet, Long> {
     Set<Diet> findAllBy();
+    Diet findDietByName(String name);
+    Set<Diet> findDietsByNameContainingIgnoreCase(String name);
     Diet findDietById(Long id);
 }

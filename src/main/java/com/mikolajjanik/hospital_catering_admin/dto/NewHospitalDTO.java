@@ -1,6 +1,5 @@
 package com.mikolajjanik.hospital_catering_admin.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

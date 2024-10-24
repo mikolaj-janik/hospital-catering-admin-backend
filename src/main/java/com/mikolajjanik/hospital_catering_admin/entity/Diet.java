@@ -22,6 +22,9 @@ public class Diet {
     @Column(name = "nazwa")
     private String name;
 
+    @Column(name = "opis", length = 1023)
+    private String description;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "diet")
     @JsonIgnore
     private Set<Meal> meals = new HashSet<>();
@@ -30,4 +33,12 @@ public class Diet {
     @JsonIgnore
     private Set<Patient> patients = new HashSet<>();
 
+    public Diet(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Diet() {
+
+    }
 }
