@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface DietRepository extends JpaRepository<Diet, Long> {
-    Set<Diet> findAllBy();
+    Set<Diet> findAllByOrderByName();
     Diet findDietByName(String name);
     Set<Diet> findDietsByNameContainingIgnoreCase(String name);
     Diet findDietById(Long id);

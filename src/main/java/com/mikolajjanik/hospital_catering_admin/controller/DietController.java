@@ -3,6 +3,7 @@ package com.mikolajjanik.hospital_catering_admin.controller;
 import com.mikolajjanik.hospital_catering_admin.dto.DietDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewHospitalDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.UpdateDietDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.service.DietService;
@@ -42,6 +43,12 @@ public class DietController {
         return new ResponseEntity<>(diet, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Set<Diet>> searchDietByName(@RequestParam ("name") String name) {
+        Set<Diet> diets = dietService.findDietsByName(name);
+        return new ResponseEntity<>(diets, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/meals")
     public Page<Meal> getMealsByDietId(@PathVariable("id") Long id, Pageable pageable) {
         return mealService.findMealsByDietId(id, pageable);
@@ -59,5 +66,12 @@ public class DietController {
     public ResponseEntity<Diet> newDiet(@Valid @RequestBody DietDTO dietDTO) {
         Diet diet = dietService.addDiet(dietDTO);
         return new ResponseEntity<>(diet, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public ResponseEntity<Diet> updateDiet(@Valid @RequestBody UpdateDietDTO dietDTO) {
+        Diet diet = dietService.updateDiet(dietDTO);
+        return new ResponseEntity<>(diet, HttpStatus.OK);
     }
 }
