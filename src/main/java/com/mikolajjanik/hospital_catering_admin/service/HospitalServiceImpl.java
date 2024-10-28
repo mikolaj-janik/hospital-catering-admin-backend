@@ -36,7 +36,8 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     public Page<HospitalDTO> findByNameContaining(String name, Pageable pageable) {
-        Page<Hospital> hospitals = hospitalRepository.findByNameContainingIgnoreCase(name, pageable);
+        Page<Hospital> hospitals = hospitalRepository.findByNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrStreetContainingIgnoreCase(name,
+                name, name, pageable);
         return handleFindHospitals(hospitals, pageable);
     }
 
