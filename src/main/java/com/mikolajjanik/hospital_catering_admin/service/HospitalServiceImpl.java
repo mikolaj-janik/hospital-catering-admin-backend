@@ -114,7 +114,7 @@ public class HospitalServiceImpl implements HospitalService {
             hospitalsList.add(hospitalDTO);
         }
 
-        return new PageImpl<>(hospitalsList, pageable, hospitalsList.size());
+        return new PageImpl<>(hospitalsList, pageable, hospitals.getTotalElements());
     }
 
     private void validateImageFormat(MultipartFile file) {
