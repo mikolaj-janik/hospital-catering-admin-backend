@@ -42,7 +42,4 @@ public class Meal {
 
     @Column(name = "tłuszcze")
     private Double fats;
-
-    @Column(name = "obraz")
-    private String image;
 }

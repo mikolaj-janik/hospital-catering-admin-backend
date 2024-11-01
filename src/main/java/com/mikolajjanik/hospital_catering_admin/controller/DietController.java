@@ -1,9 +1,6 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
-import com.mikolajjanik.hospital_catering_admin.dto.DietDTO;
-import com.mikolajjanik.hospital_catering_admin.dto.HospitalDTO;
-import com.mikolajjanik.hospital_catering_admin.dto.NewHospitalDTO;
-import com.mikolajjanik.hospital_catering_admin.dto.UpdateDietDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.*;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.service.DietService;
@@ -50,7 +47,7 @@ public class DietController {
     }
 
     @GetMapping("/{id}/meals")
-    public Page<Meal> getMealsByDietId(@PathVariable("id") Long id, Pageable pageable) {
+    public Page<MealDTO> getMealsByDietId(@PathVariable("id") Long id, Pageable pageable) {
         return mealService.findMealsByDietId(id, pageable);
     }
 

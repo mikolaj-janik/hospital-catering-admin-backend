@@ -117,7 +117,7 @@ public class HospitalServiceImpl implements HospitalService {
         return new PageImpl<>(hospitalsList, pageable, hospitals.getTotalElements());
     }
 
-    private void validateImageFormat(MultipartFile file) {
+    public static void validateImageFormat(MultipartFile file) {
 
         String originalFilename = file.getOriginalFilename();
         if (originalFilename != null &&
