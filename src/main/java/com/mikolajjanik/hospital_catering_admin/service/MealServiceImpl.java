@@ -160,6 +160,12 @@ public class MealServiceImpl implements MealService {
         );
     }
 
+    @Override
+    public Page<MealDTO> findByNameContaining(String name, Pageable pageable) {
+        Page<Meal> meals = mealRepository.findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable);
+        return this.handleFindMeals(meals, pageable);
+    }
+
     private Page<MealDTO> handleFindMeals(Page<Meal> meals, Pageable pageable) {
         List<MealDTO> mealsList = new ArrayList<>();
 

@@ -14,4 +14,5 @@ public interface MealService {
     Page<Meal> findMealsByDietIdAndName(Long id, String name, Pageable pageable);
     MealDTO addMeal(NewMealDTO newMealDTO, MultipartFile picture);
     MealDTO updateMeal(UpdateMealDTO mealDTO, MultipartFile picture);
+    Page<MealDTO> findByNameContaining(String name, Pageable pageable);
 }

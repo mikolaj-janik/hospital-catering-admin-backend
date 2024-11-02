@@ -13,6 +13,7 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     Meal findMealById(Long id);
     Page<Meal> findMealsByDietId(Long id, Pageable pageable);
     Page<Meal> findMealsByDietIdAndNameContainingIgnoreCase(Long id, String name, Pageable pageable);
+    Page<Meal> findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
 
     @Query(value = "SELECT obraz FROM posiłek WHERE id = :id", nativeQuery = true)
     byte[] findPictureById(@Param("id") Long id);

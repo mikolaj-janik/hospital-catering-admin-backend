@@ -30,6 +30,11 @@ public class MealController {
         return mealService.findAll(pageable);
     }
 
+    @GetMapping("/search")
+    public Page<MealDTO> getMealsByName(@RequestParam("name") String name, Pageable pageable) {
+        return mealService.findByNameContaining(name, pageable);
+    }
+
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<MealDTO> newMeal(@Valid @ModelAttribute NewMealDTO newMealDTO,
