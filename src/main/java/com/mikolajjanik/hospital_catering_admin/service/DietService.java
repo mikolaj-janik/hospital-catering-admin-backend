@@ -8,6 +8,7 @@ import java.util.Set;
 
 public interface DietService {
     Set<Diet> findAll();
+    Set<Diet> findAllCurrentDiets();
     Diet findDietById(Long id);
     Diet addDiet(DietDTO dietDTO);
     Diet updateDiet(UpdateDietDTO dietDTO);

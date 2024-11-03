@@ -34,6 +34,12 @@ public class DietController {
         return new ResponseEntity<>(diets, HttpStatus.OK);
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<Set<Diet>> getAllCurrentDiets() {
+        Set<Diet> diets = dietService.findAllCurrentDiets();
+        return new ResponseEntity<>(diets, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Diet> getDietById(@PathVariable("id") Long id) {
         Diet diet = dietService.findDietById(id);
@@ -44,11 +50,6 @@ public class DietController {
     public ResponseEntity<Set<Diet>> searchDietByName(@RequestParam ("name") String name) {
         Set<Diet> diets = dietService.findDietsByName(name);
         return new ResponseEntity<>(diets, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/meals")
-    public Page<MealDTO> getMealsByDietId(@PathVariable("id") Long id, Pageable pageable) {
-        return mealService.findMealsByDietId(id, pageable);
     }
 
     @GetMapping("/{id}/meals/{name}")

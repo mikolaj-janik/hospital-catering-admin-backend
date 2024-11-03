@@ -9,12 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 public interface MealRepository extends JpaRepository<Meal, Long> {
     Meal findMealById(Long id);
     Page<Meal> findMealsByDietId(Long id, Pageable pageable);
+    Page<Meal> findMealsByTypeIgnoreCase(String type, Pageable pageable);
+    Page<Meal> findMealsByDietIdAndTypeIgnoreCase(Long dietId, String type, Pageable pageable);
+    Set<Meal> findMealsByDietId(Long id);
     Page<Meal> findMealsByDietIdAndNameContainingIgnoreCase(Long id, String name, Pageable pageable);
-    Page<Meal> findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
-
+    Page<Meal> findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrTypeContainingIgnoreCase(String name, String description, String type, Pageable pageable);
     @Query(value = "SELECT obraz FROM posiłek WHERE id = :id", nativeQuery = true)
     byte[] findPictureById(@Param("id") Long id);
 

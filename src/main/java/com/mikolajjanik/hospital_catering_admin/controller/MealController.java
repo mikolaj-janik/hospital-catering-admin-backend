@@ -3,10 +3,8 @@ package com.mikolajjanik.hospital_catering_admin.controller;
 import com.mikolajjanik.hospital_catering_admin.dto.MealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewMealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
-import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.service.MealService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +24,10 @@ public class MealController {
     }
 
     @GetMapping("")
-    public Page<MealDTO> getAll(Pageable pageable) {
-        return mealService.findAll(pageable);
+    public Page<MealDTO> getAll(@RequestParam("dietId") Long dietId,
+                                @RequestParam("type") String type,
+                                Pageable pageable) {
+        return mealService.findAll(dietId, type, pageable);
     }
 
     @GetMapping("/search")

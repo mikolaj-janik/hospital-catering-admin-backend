@@ -1,30 +1,53 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
 import com.mikolajjanik.hospital_catering_admin.dao.DietRepository;
+import com.mikolajjanik.hospital_catering_admin.dao.MealRepository;
 import com.mikolajjanik.hospital_catering_admin.dto.DietDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.UpdateDietDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
+import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.exception.DietAlreadyExistException;
 import com.mikolajjanik.hospital_catering_admin.exception.DietNotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class DietServiceImpl implements DietService {
     private final DietRepository dietRepository;
 
+    private final MealRepository mealRepository;
+
     @Autowired
-    public DietServiceImpl(DietRepository dietRepository) {
+    public DietServiceImpl(DietRepository dietRepository, MealRepository mealRepository) {
         this.dietRepository = dietRepository;
+        this.mealRepository = mealRepository;
     }
 
     @Override
     public Set<Diet> findAll() {
         return dietRepository.findAllByOrderByName();
+    }
+
+    @Override
+    public Set<Diet> findAllCurrentDiets() {
+        Set<Diet> diets = dietRepository.findAllByOrderByName();
+        Set<Diet> dietsToReturn = new HashSet<>();
+
+        for (Diet diet : diets) {
+            Set<Meal> meals = mealRepository.findMealsByDietId(diet.getId());
+            if (!meals.isEmpty()) {
+                dietsToReturn.add(diet);
+            }
+        }
+        return dietsToReturn;
     }
 
     @Override

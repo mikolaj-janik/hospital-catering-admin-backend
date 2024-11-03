@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface MealService {
-    Page<MealDTO> findAll(Pageable pageable);
+    Page<MealDTO> findAll(Long dietId, String type, Pageable pageable);
     Page<MealDTO> findMealsByDietId(Long id, Pageable pageable);
     Page<Meal> findMealsByDietIdAndName(Long id, String name, Pageable pageable);
     MealDTO addMeal(NewMealDTO newMealDTO, MultipartFile picture);

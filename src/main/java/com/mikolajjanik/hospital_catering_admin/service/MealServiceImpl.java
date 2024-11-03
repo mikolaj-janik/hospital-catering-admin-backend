@@ -8,23 +8,27 @@ import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.exception.DietNotFoundException;
+import com.mikolajjanik.hospital_catering_admin.exception.InvalidMealTypeException;
 import com.mikolajjanik.hospital_catering_admin.exception.MealNotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 public class MealServiceImpl implements MealService {
     private final MealRepository mealRepository;
     private final DietRepository dietRepository;
+    private static final String DEFAULT_MEAL_TYPE = "wszystkie";
 
     public MealServiceImpl(MealRepository mealRepository, DietRepository dietRepository) {
         this.mealRepository = mealRepository;
@@ -32,8 +36,33 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public Page<MealDTO> findAll(Pageable pageable) {
-        Page<Meal> meals = mealRepository.findAll(pageable);
+    @SneakyThrows
+    public Page<MealDTO> findAll(Long dietId, String type, Pageable pageable) {
+        if (dietId == null || dietId < 0) {
+            throw new DietNotFoundException(dietId);
+        }
+
+        if (type.isEmpty() || !(type.equalsIgnoreCase("wszystkie")
+                || type.equalsIgnoreCase("śniadanie")
+                || type.equalsIgnoreCase("obiad")
+                || type.equalsIgnoreCase("kolacja"))) {
+            throw new InvalidMealTypeException();
+        }
+        Page<Meal> meals;
+
+        if (dietId == 0 && type.equalsIgnoreCase(DEFAULT_MEAL_TYPE)) {
+            meals = mealRepository.findAll(pageable);
+
+        } else if (dietId > 0 && type.equalsIgnoreCase(DEFAULT_MEAL_TYPE)) {
+            meals = mealRepository.findMealsByDietId(dietId, pageable);
+
+        } else if (dietId == 0 && !type.equalsIgnoreCase(DEFAULT_MEAL_TYPE)) {
+            meals = mealRepository.findMealsByTypeIgnoreCase(type, pageable);
+
+        } else {
+            meals = mealRepository.findMealsByDietIdAndTypeIgnoreCase(dietId, type, pageable);
+
+        }
         return handleFindMeals(meals, pageable);
     }
 
@@ -162,7 +191,8 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Page<MealDTO> findByNameContaining(String name, Pageable pageable) {
-        Page<Meal> meals = mealRepository.findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable);
+        Page<Meal> meals = mealRepository.findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrTypeContainingIgnoreCase(name,
+                name, name, pageable);
         return this.handleFindMeals(meals, pageable);
     }
 
