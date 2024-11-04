@@ -3,6 +3,7 @@ package com.mikolajjanik.hospital_catering_admin.controller;
 import com.mikolajjanik.hospital_catering_admin.dto.MealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewMealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
+import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.service.MealService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,12 @@ public class MealController {
     @GetMapping("/search")
     public Page<MealDTO> getMealsByName(@RequestParam("name") String name, Pageable pageable) {
         return mealService.findByNameContaining(name, pageable);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MealDTO> getMealById(@PathVariable("id") Long id) {
+        MealDTO meal = mealService.findMealById(id);
+        return new ResponseEntity<>(meal, HttpStatus.OK);
     }
 
     @PostMapping("/add")

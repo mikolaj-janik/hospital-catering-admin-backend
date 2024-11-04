@@ -139,6 +139,32 @@ public class MealServiceImpl implements MealService {
 
     @Override
     @SneakyThrows
+    public MealDTO findMealById(Long id) {
+        Meal meal = mealRepository.findMealById(id);
+
+        if (meal == null) {
+            throw new MealNotFoundException(id);
+        }
+
+        byte[] mealImage = mealRepository.findPictureById(id);
+
+        return new MealDTO(
+                meal.getId(),
+                meal.getDiet(),
+                meal.getName(),
+                meal.getDescription(),
+                meal.getPrice(),
+                meal.getType(),
+                meal.getCalories(),
+                meal.getProtein(),
+                meal.getCarbohydrates(),
+                meal.getFats(),
+                Base64.getEncoder().encodeToString(mealImage)
+                );
+    }
+
+    @Override
+    @SneakyThrows
     public MealDTO updateMeal(UpdateMealDTO mealDTO, MultipartFile picture) {
         Long id = Long.parseLong(mealDTO.getId());
 
