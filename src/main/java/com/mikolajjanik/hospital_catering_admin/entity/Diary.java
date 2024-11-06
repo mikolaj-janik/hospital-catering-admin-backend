@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "jasłospis")
+@Table(name = "jadłospis")
 @Getter
 @Setter
 public class Diary {
@@ -20,22 +21,22 @@ public class Diary {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "data")
+    private LocalDate date;
+
     @ManyToOne
     @JoinColumn(name = "dietaid")
     private Diet diet;
 
     @ManyToOne
-    @JoinColumn(name = "posiłekid")
-    private Meal meal;
+    @JoinColumn(name = "sniadanieid")
+    private Meal breakfast;
 
-    @Column(name = "data")
-    private Date date;
+    @ManyToOne
+    @JoinColumn(name = "obiadid")
+    private Meal lunch;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "zamówienie_jadłospis",
-            joinColumns = { @JoinColumn(name = "jadłospisid") },
-            inverseJoinColumns = { @JoinColumn(name = "zamówienieid") }
-    )
-    private Set<Order> orders = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "kolacjaid")
+    private Meal supper;
 }

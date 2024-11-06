@@ -21,6 +21,4 @@ public class Order {
     @Column(name = "cena_całkowita")
     private double totalPrice;
 
-    @ManyToMany(mappedBy = "orders")
-    private Set<Diary> meals = new HashSet<>();
 }
