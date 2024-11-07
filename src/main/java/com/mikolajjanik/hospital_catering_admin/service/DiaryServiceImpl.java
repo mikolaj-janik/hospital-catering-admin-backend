@@ -58,6 +58,9 @@ public class DiaryServiceImpl implements DiaryService {
         Meal lunch = mealRepository.findMealById(lunchId);
         Meal supper = mealRepository.findMealById(supperId);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.parse(stringDate, formatter);
+
         if (diet == null) {
             throw new DietNotFoundException(dietId);
         }
@@ -102,8 +105,11 @@ public class DiaryServiceImpl implements DiaryService {
             throw new PremiumMealDiaryException();
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate date = LocalDate.parse(stringDate, formatter);
+        Diary existingDiary = this.diaryRepository.findDiaryByDietIdAndDate(dietId, date);
+
+        if (existingDiary != null) {
+            throw new DiaryAlreadyExistsException(diet.getName(), date);
+        }
 
         Diary diary = new Diary();
 
