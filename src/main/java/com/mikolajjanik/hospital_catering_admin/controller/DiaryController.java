@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/diary")
 public class DiaryController {
@@ -22,6 +24,12 @@ public class DiaryController {
     public ResponseEntity<Diary> getDiaryById(@PathVariable ("id") Long id) {
         Diary diary = diaryService.getDiaryById(id);
         return new ResponseEntity<>(diary, HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Set<Diary>> getDiaryByDietId(@RequestParam ("dietid") Long id) {
+        Set<Diary> diaries = diaryService.getDiaryByDietId(id);
+        return new ResponseEntity<>(diaries, HttpStatus.OK);
     }
 
     @PostMapping("/add")

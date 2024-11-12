@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Service
 public class DiaryServiceImpl implements DiaryService {
@@ -120,6 +121,18 @@ public class DiaryServiceImpl implements DiaryService {
         diary.setSupper(supper);
 
         return diaryRepository.save(diary);
+    }
+
+    @Override
+    @SneakyThrows
+    public Set<Diary> getDiaryByDietId(Long id) {
+        Diet diet = dietRepository.findDietById(id);
+
+        if (diet == null) {
+            throw new DietNotFoundException(id);
+        }
+
+        return diaryRepository.findDiariesByDietId(id);
     }
 
     private void checkIfDiaryExists(Long id) throws IOException {
