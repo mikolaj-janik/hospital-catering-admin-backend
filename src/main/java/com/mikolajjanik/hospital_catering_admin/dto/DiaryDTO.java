@@ -29,4 +29,8 @@ public class DiaryDTO {
     @NotNull(message = "Field 'date' cannot be null.")
     @Pattern(regexp = "(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[1,2])-(19|20)\\d{2}", message = "Field 'date' must be in the format DD-MM-YYYY")
     private String date;
+
+    private String repeatFor;
+
+    private String repeatUntil;
 }

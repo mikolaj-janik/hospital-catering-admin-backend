@@ -27,6 +27,9 @@ public class DiaryServiceImpl implements DiaryService {
     private static final String BREAKFAST_NAME = "śniadanie";
     private static final String LUNCH_NAME = "obiad";
     private static final String SUPPER_NAME = "kolacja";
+    private static final String NEVER = "never";
+    private static final String EVERY_WEEK = "every week";
+    private static final String EVERY_2_WEEKS = "every 2 weeks";
 
     @Autowired
     public DiaryServiceImpl(
@@ -53,6 +56,10 @@ public class DiaryServiceImpl implements DiaryService {
         Long lunchId = diaryDTO.getLunchId();
         Long supperId = diaryDTO.getSupperId();
         String stringDate = diaryDTO.getDate();
+        String repeatFor = diaryDTO.getRepeatFor();
+        int repeatUntil = Integer.parseInt(diaryDTO.getRepeatUntil());
+        int repeatForDays = 0;
+
 
         Diet diet = dietRepository.findDietById(dietId);
         Meal breakfast = mealRepository.findMealById(breakfastId);
@@ -112,15 +119,42 @@ public class DiaryServiceImpl implements DiaryService {
             throw new DiaryAlreadyExistsException(diet.getName(), date);
         }
 
-        Diary diary = new Diary();
+        if (repeatFor.equals(EVERY_WEEK)) {
+            repeatForDays = 7;
+        } else if (repeatFor.equals(EVERY_2_WEEKS)) {
+            repeatForDays = 14;
+        }
 
+        if (repeatFor.equals(NEVER)) {
+            Diary diary = new Diary();
+            diary.setDate(date);
+            diary.setDiet(diet);
+            diary.setBreakfast(breakfast);
+            diary.setLunch(lunch);
+            diary.setSupper(supper);
+
+        } else if (repeatFor.equals(EVERY_WEEK) || repeatFor.equals(EVERY_2_WEEKS)) {
+            LocalDate finalDate = date.plusMonths(repeatUntil);
+
+            while (date.isBefore(finalDate)) {
+                Diary diary = new Diary();
+                diary.setDate(date);
+                diary.setDiet(diet);
+                diary.setBreakfast(breakfast);
+                diary.setLunch(lunch);
+                diary.setSupper(supper);
+                diaryRepository.save(diary);
+                date = date.plusDays(repeatForDays);
+            }
+        }
+        Diary diary = new Diary();
         diary.setDate(date);
         diary.setDiet(diet);
         diary.setBreakfast(breakfast);
         diary.setLunch(lunch);
         diary.setSupper(supper);
 
-        return diaryRepository.save(diary);
+        return diary;
     }
 
     @Override
