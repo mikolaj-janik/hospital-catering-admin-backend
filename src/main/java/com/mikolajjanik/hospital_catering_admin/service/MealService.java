@@ -8,7 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Set;
+
 public interface MealService {
+    List<Meal> findMealsByDietIdAndType(Long dietId, String type);
     Page<MealDTO> findAll(Long dietId, String type, Pageable pageable);
     Page<MealDTO> findMealsByDietId(Long id, Pageable pageable);
     Page<Meal> findMealsByDietIdAndName(Long id, String name, Pageable pageable);

@@ -156,4 +156,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IncorrectTypeException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectTypeException(IncorrectTypeException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
 }

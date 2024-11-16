@@ -8,21 +8,20 @@ import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.exception.DietNotFoundException;
+import com.mikolajjanik.hospital_catering_admin.exception.IncorrectTypeException;
 import com.mikolajjanik.hospital_catering_admin.exception.InvalidMealTypeException;
 import com.mikolajjanik.hospital_catering_admin.exception.MealNotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jndi.TypeMismatchNamingException;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MealServiceImpl implements MealService {
@@ -33,6 +32,23 @@ public class MealServiceImpl implements MealService {
     public MealServiceImpl(MealRepository mealRepository, DietRepository dietRepository) {
         this.mealRepository = mealRepository;
         this.dietRepository = dietRepository;
+    }
+
+    @Override
+    @SneakyThrows
+    public List<Meal> findMealsByDietIdAndType(Long dietId, String type) {
+        Diet diet = dietRepository.findDietById(dietId);
+
+        if (diet == null) {
+            throw new DietNotFoundException(dietId);
+        }
+
+        return switch (type) {
+            case "śniadanie", "obiad", "kolacja" -> {
+                yield mealRepository.findMealsByDietIdAndType(dietId, type);
+            }
+            default -> throw new IncorrectTypeException();
+        };
     }
 
     @Override

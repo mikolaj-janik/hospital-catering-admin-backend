@@ -52,13 +52,19 @@ public class DietServiceImpl implements DietService {
 
     @Override
     @SneakyThrows
-    public Diet findDietById(Long id) {
+    public Diet findDietById(Long id, String diary) {
         Diet diet = dietRepository.findDietById(id);
 
         if (diet == null) {
             throw new DietNotFoundException(id);
         }
 
+        if (diary.equals("true")) {
+            Set<Meal> meals = mealRepository.findMealsByDietId(id);
+            if (meals.isEmpty()) {
+                throw new DietNotFoundException(id);
+            }
+        }
         return diet;
     }
 

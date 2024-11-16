@@ -131,7 +131,6 @@ public class DiaryServiceImpl implements DiaryService {
         if (diet == null) {
             throw new DietNotFoundException(id);
         }
-
         return diaryRepository.findDiariesByDietId(id);
     }
 

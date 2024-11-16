@@ -41,8 +41,9 @@ public class DietController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Diet> getDietById(@PathVariable("id") Long id) {
-        Diet diet = dietService.findDietById(id);
+    public ResponseEntity<Diet> getDietById(@PathVariable("id") Long id,
+                                            @RequestParam("diary") String diary) {
+        Diet diet = dietService.findDietById(id, diary);
         return new ResponseEntity<>(diet, HttpStatus.OK);
     }
 

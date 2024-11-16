@@ -4,6 +4,7 @@ import com.mikolajjanik.hospital_catering_admin.dto.MealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewMealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
+import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.service.MealService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/meals")
 public class MealController {
     private final MealService mealService;
+    private static final String BREAKFAST = "śniadanie";
+    private static final String LUNCH = "obiad";
+    private static final String SUPPER = "kolacja";
 
     @Autowired
     public MealController(MealService mealService) {
@@ -29,6 +36,21 @@ public class MealController {
                                 @RequestParam("type") String type,
                                 Pageable pageable) {
         return mealService.findAll(dietId, type, pageable);
+    }
+
+    @GetMapping("/breakfasts")
+    public List<Meal> getBreakfastsByDietId(@RequestParam("dietId") Long dietId) {
+        return mealService.findMealsByDietIdAndType(dietId, BREAKFAST);
+    }
+
+    @GetMapping("/lunches")
+    public List<Meal> getLunchesByDietId(@RequestParam("dietId") Long dietId) {
+        return mealService.findMealsByDietIdAndType(dietId, LUNCH);
+    }
+
+    @GetMapping("/suppers")
+    public List<Meal> getSuppersByDietId(@RequestParam("dietId") Long dietId) {
+        return mealService.findMealsByDietIdAndType(dietId, SUPPER);
     }
 
     @GetMapping("/search")
