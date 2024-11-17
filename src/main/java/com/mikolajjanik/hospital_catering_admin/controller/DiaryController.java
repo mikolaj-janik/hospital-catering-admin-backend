@@ -1,6 +1,7 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
 import com.mikolajjanik.hospital_catering_admin.dto.DiaryDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.NewDiaryDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diary;
 import com.mikolajjanik.hospital_catering_admin.service.DiaryService;
 import jakarta.validation.Valid;
@@ -34,9 +35,16 @@ public class DiaryController {
 
     @PostMapping("/add")
     @ResponseBody
-    public ResponseEntity<Diary> addDiary(@Valid @RequestBody DiaryDTO diaryDTO) {
-        Diary diary = diaryService.createDiary(diaryDTO);
+    public ResponseEntity<Diary> addDiary(@Valid @RequestBody NewDiaryDTO newDiaryDTO) {
+        Diary diary = diaryService.createDiary(newDiaryDTO);
         return new ResponseEntity<>(diary, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public ResponseEntity<Diary> editDiary(@Valid @RequestBody DiaryDTO diaryDTO) {
+        Diary diary = diaryService.updateDiary(diaryDTO);
+        return new ResponseEntity<>(diary, HttpStatus.OK);
     }
 
 }

@@ -4,6 +4,7 @@ import com.mikolajjanik.hospital_catering_admin.dao.DiaryRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.DietRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.MealRepository;
 import com.mikolajjanik.hospital_catering_admin.dto.DiaryDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.NewDiaryDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diary;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
@@ -50,14 +51,14 @@ public class DiaryServiceImpl implements DiaryService {
 
     @Override
     @SneakyThrows
-    public Diary createDiary(DiaryDTO diaryDTO) {
-        Long dietId = diaryDTO.getDietId();
-        Long breakfastId = diaryDTO.getBreakfastId();
-        Long lunchId = diaryDTO.getLunchId();
-        Long supperId = diaryDTO.getSupperId();
-        String stringDate = diaryDTO.getDate();
-        String repeatFor = diaryDTO.getRepeatFor();
-        int repeatUntil = Integer.parseInt(diaryDTO.getRepeatUntil());
+    public Diary createDiary(NewDiaryDTO newDiaryDTO) {
+        Long dietId = newDiaryDTO.getDietId();
+        Long breakfastId = newDiaryDTO.getBreakfastId();
+        Long lunchId = newDiaryDTO.getLunchId();
+        Long supperId = newDiaryDTO.getSupperId();
+        String stringDate = newDiaryDTO.getDate();
+        String repeatFor = newDiaryDTO.getRepeatFor();
+        int repeatUntil = Integer.parseInt(newDiaryDTO.getRepeatUntil());
         int repeatForDays = 0;
 
 
@@ -132,6 +133,7 @@ public class DiaryServiceImpl implements DiaryService {
             diary.setBreakfast(breakfast);
             diary.setLunch(lunch);
             diary.setSupper(supper);
+            diaryRepository.save(diary);
 
         } else if (repeatFor.equals(EVERY_WEEK) || repeatFor.equals(EVERY_2_WEEKS)) {
             LocalDate finalDate = date.plusMonths(repeatUntil);
@@ -155,6 +157,43 @@ public class DiaryServiceImpl implements DiaryService {
         diary.setSupper(supper);
 
         return diary;
+    }
+
+    @Override
+    @SneakyThrows
+    public Diary updateDiary(DiaryDTO diaryDTO) {
+        Long id = diaryDTO.getId();
+        Diary diary = diaryRepository.findDiaryById(id);
+
+        if (diary == null) {
+            throw new DiaryNotFoundException(id);
+        }
+
+        Long breakfastId = diaryDTO.getBreakfastId();
+        Long lunchId = diaryDTO.getLunchId();
+        Long supperId = diaryDTO.getSupperId();
+
+        Meal breakfast = mealRepository.findMealById(breakfastId);
+        Meal lunch = mealRepository.findMealById(lunchId);
+        Meal supper = mealRepository.findMealById(supperId);
+
+        if (breakfast == null) {
+            throw new MealNotFoundException(breakfastId);
+        }
+
+        if (lunch == null) {
+            throw new MealNotFoundException(lunchId);
+        }
+
+        if (supper == null) {
+            throw new MealNotFoundException(supperId);
+        }
+
+        diary.setBreakfast(breakfast);
+        diary.setLunch(lunch);
+        diary.setSupper(supper);
+
+        return diaryRepository.save(diary);
     }
 
     @Override
