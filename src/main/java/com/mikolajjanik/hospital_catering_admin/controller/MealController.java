@@ -79,4 +79,10 @@ public class MealController {
         MealDTO meal = mealService.updateMeal(mealDTO, picture);
         return new ResponseEntity<>(meal, HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMealById(@PathVariable ("id") Long id) {
+        mealService.deleteMealById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

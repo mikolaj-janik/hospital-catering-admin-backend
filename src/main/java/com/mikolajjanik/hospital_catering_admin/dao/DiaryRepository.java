@@ -10,4 +10,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Diary findDiaryById(Long id);
     Diary findDiaryByDietIdAndDate(Long dietId, LocalDate date);
     Set<Diary> findDiariesByDietId(Long id);
+    Set<Diary> findDiariesByBreakfastId(Long id);
+    Set<Diary> findDiariesByLunchId(Long id);
+    Set<Diary> findDiariesBySupperId(Long id);
 }

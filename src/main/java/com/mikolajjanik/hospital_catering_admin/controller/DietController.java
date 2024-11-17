@@ -73,4 +73,10 @@ public class DietController {
         Diet diet = dietService.updateDiet(dietDTO);
         return new ResponseEntity<>(diet, HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteDietById(@PathVariable ("id") Long id) {
+        dietService.deleteDietById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

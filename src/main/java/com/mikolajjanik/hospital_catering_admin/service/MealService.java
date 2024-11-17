@@ -20,4 +20,5 @@ public interface MealService {
     MealDTO findMealById(Long id);
     MealDTO updateMeal(UpdateMealDTO mealDTO, MultipartFile picture);
     Page<MealDTO> findByNameContaining(String name, Pageable pageable);
+    void deleteMealById(Long id);
 }

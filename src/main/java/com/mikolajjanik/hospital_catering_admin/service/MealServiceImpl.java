@@ -1,16 +1,15 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
+import com.mikolajjanik.hospital_catering_admin.dao.DiaryRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.DietRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.MealRepository;
 import com.mikolajjanik.hospital_catering_admin.dto.MealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewMealDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.UpdateMealDTO;
+import com.mikolajjanik.hospital_catering_admin.entity.Diary;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
-import com.mikolajjanik.hospital_catering_admin.exception.DietNotFoundException;
-import com.mikolajjanik.hospital_catering_admin.exception.IncorrectTypeException;
-import com.mikolajjanik.hospital_catering_admin.exception.InvalidMealTypeException;
-import com.mikolajjanik.hospital_catering_admin.exception.MealNotFoundException;
+import com.mikolajjanik.hospital_catering_admin.exception.*;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,11 +26,13 @@ import java.util.*;
 public class MealServiceImpl implements MealService {
     private final MealRepository mealRepository;
     private final DietRepository dietRepository;
+    private final DiaryRepository diaryRepository;
     private static final String DEFAULT_MEAL_TYPE = "wszystkie";
 
-    public MealServiceImpl(MealRepository mealRepository, DietRepository dietRepository) {
+    public MealServiceImpl(MealRepository mealRepository, DietRepository dietRepository, DiaryRepository diaryRepository) {
         this.mealRepository = mealRepository;
         this.dietRepository = dietRepository;
+        this.diaryRepository = diaryRepository;
     }
 
     @Override
@@ -236,6 +237,26 @@ public class MealServiceImpl implements MealService {
         Page<Meal> meals = mealRepository.findMealsByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrTypeContainingIgnoreCase(name,
                 name, name, pageable);
         return this.handleFindMeals(meals, pageable);
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteMealById(Long id) {
+        Meal meal = mealRepository.findMealById(id);
+
+        if (meal == null) {
+            throw new MealNotFoundException(id);
+        }
+
+        Set<Diary> diaryBreakfast = diaryRepository.findDiariesByBreakfastId(id);
+        Set<Diary> diaryLunch = diaryRepository.findDiariesByLunchId(id);
+        Set<Diary> diarySupper = diaryRepository.findDiariesBySupperId(id);
+
+        if (!diaryBreakfast.isEmpty() || !diaryLunch.isEmpty() || !diarySupper.isEmpty()) {
+            throw new MealCannotBeDeletedException();
+        }
+
+        this.mealRepository.deleteById(id);
     }
 
     private Page<MealDTO> handleFindMeals(Page<Meal> meals, Pageable pageable) {

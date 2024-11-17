@@ -162,4 +162,16 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MealCannotBeDeletedException.class)
+    public ResponseEntity<ErrorResponse> handleMealCannotBeDeletedException(MealCannotBeDeletedException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DietCannotBeDeletedException.class)
+    public ResponseEntity<ErrorResponse> handleDietCannotBeDeletedException(DietCannotBeDeletedException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
 }

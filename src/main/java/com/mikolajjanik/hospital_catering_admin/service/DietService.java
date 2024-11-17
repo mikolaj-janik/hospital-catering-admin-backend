@@ -13,4 +13,5 @@ public interface DietService {
     Diet addDiet(DietDTO dietDTO);
     Diet updateDiet(UpdateDietDTO dietDTO);
     Set<Diet> findDietsByName(String name);
+    void deleteDietById(Long id);
 }

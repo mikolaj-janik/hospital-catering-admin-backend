@@ -7,6 +7,7 @@ import com.mikolajjanik.hospital_catering_admin.dto.UpdateDietDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Meal;
 import com.mikolajjanik.hospital_catering_admin.exception.DietAlreadyExistException;
+import com.mikolajjanik.hospital_catering_admin.exception.DietCannotBeDeletedException;
 import com.mikolajjanik.hospital_catering_admin.exception.DietNotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,24 @@ public class DietServiceImpl implements DietService {
     @Override
     public Set<Diet> findDietsByName(String name) {
         return dietRepository.findDietsByNameContainingIgnoreCase(name);
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteDietById(Long id) {
+        Diet diet = dietRepository.findDietById(id);
+
+        if (diet == null) {
+            throw new DietNotFoundException(id);
+        }
+
+        Set<Meal> meals = mealRepository.findMealsByDietId(id);
+
+        if (!meals.isEmpty()) {
+            throw new DietCannotBeDeletedException();
+        }
+
+        dietRepository.deleteById(id);
     }
 
     private void checkDietAlreadyExists(String name) throws IOException {
