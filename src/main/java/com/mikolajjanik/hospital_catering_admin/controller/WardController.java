@@ -1,16 +1,15 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
+import com.mikolajjanik.hospital_catering_admin.dto.NewWardDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import com.mikolajjanik.hospital_catering_admin.service.DieticianService;
 import com.mikolajjanik.hospital_catering_admin.service.WardService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -36,5 +35,12 @@ public class WardController {
     public ResponseEntity<Set<Dietician>> getDieticiansByWardId(@PathVariable("id") Long id) {
         Set<Dietician> dieticians = dieticianService.findDieticiansByWardId(id);
         return new ResponseEntity<>(dieticians, HttpStatus.OK);
+    }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public ResponseEntity<Ward> createWard(@Valid @RequestBody NewWardDTO wardDTO) {
+        Ward ward = wardService.createWard(wardDTO);
+        return new ResponseEntity<>(ward, HttpStatus.CREATED);
     }
 }
