@@ -5,6 +5,7 @@ import com.mikolajjanik.hospital_catering_admin.dao.HospitalRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.WardRepository;
 import com.mikolajjanik.hospital_catering_admin.dto.DietDTO;
 import com.mikolajjanik.hospital_catering_admin.dto.NewWardDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.UpdateWardDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.DieticianWard;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
@@ -15,6 +16,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -100,5 +102,62 @@ public class WardServiceImpl implements WardService {
         }
 
         return ward;
+    }
+
+    @Override
+    @SneakyThrows
+    public Ward updateWard(UpdateWardDTO wardDTO) {
+        Long id = wardDTO.getId();
+        String name = wardDTO.getName();
+        String phoneNumber = wardDTO.getPhoneNumber();
+        List<Dietician> newDieticians = wardDTO.getDieticians();
+
+        Ward ward = wardRepository.findWardById(id);
+
+        if (ward == null) {
+            throw new WardNotFoundException(id);
+        }
+
+        List<DieticianWard> dieticianWards = dieticianWardRepository.findDieticianWardsByWardId(id);
+        List<Dietician> oldDieticians = new ArrayList<>();
+
+        for (DieticianWard oldDietician : dieticianWards) {
+            boolean dieticianToBeDeleted = true;
+
+            for (Dietician newDietician : newDieticians) {
+                if (oldDietician.getDietician().getId().equals(newDietician.getId())) {
+                    dieticianToBeDeleted = false;
+                    break;
+                }
+            }
+            if (dieticianToBeDeleted) {
+                dieticianWardRepository.deleteById(oldDietician.getId());
+            } else {
+                oldDieticians.add(oldDietician.getDietician());
+            }
+        }
+
+        for (Dietician newDietician : newDieticians) {
+            boolean toBeInserted = true;
+
+            for (Dietician oldDietician : oldDieticians) {
+                if (oldDietician.getId().equals(newDietician.getId())) {
+                    toBeInserted = false;
+                    break;
+                }
+            }
+            if (toBeInserted) {
+                DieticianWard dieticianWard = new DieticianWard();
+                dieticianWard.setDietician(newDietician);
+                dieticianWard.setWard(ward);
+
+                dieticianWardRepository.save(dieticianWard);
+            }
+        }
+
+        ward.setName(name);
+        ward.setPhoneNumber(phoneNumber);
+
+        return wardRepository.save(ward);
     }
 }

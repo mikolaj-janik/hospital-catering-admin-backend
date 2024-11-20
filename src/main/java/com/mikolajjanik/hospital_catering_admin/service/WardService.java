@@ -1,6 +1,7 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
 import com.mikolajjanik.hospital_catering_admin.dto.NewWardDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.UpdateWardDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import java.util.Set;
 
@@ -9,4 +10,5 @@ public interface WardService {
     Set<Ward> findWardsByHospitalId(Long id);
     Set<Ward> findByHospitalIdAndNameContaining(Long id, String name);
     Ward createWard(NewWardDTO wardDTO);
+    Ward updateWard(UpdateWardDTO wardDTO);
 }

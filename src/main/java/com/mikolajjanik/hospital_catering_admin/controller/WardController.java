@@ -1,6 +1,9 @@
 package com.mikolajjanik.hospital_catering_admin.controller;
 
 import com.mikolajjanik.hospital_catering_admin.dto.NewWardDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.UpdateDietDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.UpdateWardDTO;
+import com.mikolajjanik.hospital_catering_admin.entity.Diet;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import com.mikolajjanik.hospital_catering_admin.service.DieticianService;
@@ -42,5 +45,12 @@ public class WardController {
     public ResponseEntity<Ward> createWard(@Valid @RequestBody NewWardDTO wardDTO) {
         Ward ward = wardService.createWard(wardDTO);
         return new ResponseEntity<>(ward, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public ResponseEntity<Ward> updateWard(@Valid @RequestBody UpdateWardDTO wardDTO) {
+        Ward ward = wardService.updateWard(wardDTO);
+        return new ResponseEntity<>(ward, HttpStatus.OK);
     }
 }
