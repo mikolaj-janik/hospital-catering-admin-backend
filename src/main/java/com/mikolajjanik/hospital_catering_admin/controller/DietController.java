@@ -47,8 +47,13 @@ public class DietController {
         return new ResponseEntity<>(diet, HttpStatus.OK);
     }
 
+    @GetMapping("/ward/{id}")
+    public ResponseEntity<Set<Diet>> getDietsByWardId(@PathVariable("id") Long id) {
+        Set<Diet> diets = dietService.findDietsByWardId(id);
+        return new ResponseEntity<>(diets, HttpStatus.OK);
+    }
     @GetMapping("/search")
-    public ResponseEntity<Set<Diet>> searchDietByName(@RequestParam ("name") String name) {
+    public ResponseEntity<Set<Diet>> searchDietByName(@RequestParam("name") String name) {
         Set<Diet> diets = dietService.findDietsByName(name);
         return new ResponseEntity<>(diets, HttpStatus.OK);
     }
