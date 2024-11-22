@@ -28,4 +28,10 @@ public class PatientController {
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
+    @GetMapping("/hospital/{id}")
+    public ResponseEntity<List<Patient>> getPatientsByHospitalId(@PathVariable("id") Long hospitalId) {
+        List<Patient> patients = patientService.findPatientsByHospitalId(hospitalId);
+        return new ResponseEntity<>(patients, HttpStatus.OK);
+    }
+
 }

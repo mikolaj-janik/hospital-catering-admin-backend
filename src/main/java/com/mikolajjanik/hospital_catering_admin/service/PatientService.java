@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface PatientService {
     List<Patient>findPatientsByWardId(Long id);
+    List<Patient>findPatientsByHospitalId(Long id);
 }

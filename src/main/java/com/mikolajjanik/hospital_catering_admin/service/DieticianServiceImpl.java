@@ -13,6 +13,8 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -62,5 +64,24 @@ public class DieticianServiceImpl implements DieticianService {
         }
 
         return ward.getDieticians();
+    }
+
+    @Override
+    @SneakyThrows
+    public List<Dietician> findAllDieticians(Long hospitalId) {
+        List<Dietician> dieticians;
+        if (hospitalId == 0) {
+            dieticians = dieticianRepository.findAllDieticians();
+
+        } else {
+            Hospital hospital = hospitalRepository.findHospitalById(hospitalId);
+
+            if (hospital == null) {
+                throw new HospitalNotFoundException(hospitalId);
+            }
+            dieticians = dieticianRepository.findDieticians(hospitalId);
+        }
+
+        return dieticians;
     }
 }
