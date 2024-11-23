@@ -1,9 +1,13 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
 import com.mikolajjanik.hospital_catering_admin.dao.DieticianRepository;
+import com.mikolajjanik.hospital_catering_admin.dao.DieticianWardRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.HospitalRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.WardRepository;
+import com.mikolajjanik.hospital_catering_admin.dto.DieticianDTO;
+import com.mikolajjanik.hospital_catering_admin.dto.DieticianDetailsDTO;
 import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
+import com.mikolajjanik.hospital_catering_admin.entity.DieticianWard;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
 import com.mikolajjanik.hospital_catering_admin.exception.DieticianNotFoundException;
@@ -11,11 +15,11 @@ import com.mikolajjanik.hospital_catering_admin.exception.HospitalNotFoundExcept
 import com.mikolajjanik.hospital_catering_admin.exception.WardNotFoundException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class DieticianServiceImpl implements DieticianService {
@@ -23,23 +27,47 @@ public class DieticianServiceImpl implements DieticianService {
     private final DieticianRepository dieticianRepository;
     private final HospitalRepository hospitalRepository;
     private final WardRepository wardRepository;
+    private final DieticianWardRepository dieticianWardRepository;
 
     @Autowired
-    public DieticianServiceImpl(DieticianRepository dieticianRepository, HospitalRepository hospitalRepository, WardRepository wardRepository) {
+    public DieticianServiceImpl(DieticianRepository dieticianRepository,
+                                HospitalRepository hospitalRepository,
+                                WardRepository wardRepository,
+                                DieticianWardRepository dieticianWardRepository) {
         this.dieticianRepository = dieticianRepository;
         this.hospitalRepository = hospitalRepository;
         this.wardRepository = wardRepository;
+        this.dieticianWardRepository = dieticianWardRepository;
     }
 
     @Override
     @SneakyThrows
-    public Dietician findDieticianById(Long id) {
+    public DieticianDetailsDTO findDieticianById(Long id) {
         Dietician dietician = dieticianRepository.findDieticianById(id);
 
         if (dietician == null) {
             throw new DieticianNotFoundException(id);
         }
-        return dietician;
+        byte[] rawPicture = dieticianRepository.findPictureById(id);
+
+        if (rawPicture == null) {
+            return new DieticianDetailsDTO(
+                    dietician.getId(),
+                    dietician.getName(),
+                    dietician.getSurname(),
+                    dietician.getEmail(),
+                    dietician.getHospital()
+            );
+        }
+
+        return new DieticianDetailsDTO(
+                dietician.getId(),
+                dietician.getName(),
+                dietician.getSurname(),
+                dietician.getEmail(),
+                dietician.getHospital(),
+                Base64.getEncoder().encodeToString(rawPicture)
+        );
     }
 
     @Override
@@ -83,5 +111,58 @@ public class DieticianServiceImpl implements DieticianService {
         }
 
         return dieticians;
+    }
+
+    @Override
+    @SneakyThrows
+    public Dietician registerNewDietician(DieticianDTO dieticianDTO) {
+        String password = dieticianDTO.getDefaultPassword();
+        Long hospitalId = dieticianDTO.getHospitalId();
+        Hospital hospital = hospitalRepository.findHospitalById(hospitalId);
+        List<Ward> wards = dieticianDTO.getWards();
+
+        if (hospital == null) {
+            throw new HospitalNotFoundException(hospitalId);
+        }
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(password);
+
+        Dietician dietician = new Dietician();
+        dietician.setName(dieticianDTO.getName());
+        dietician.setSurname(dieticianDTO.getSurname());
+        dietician.setHospital(hospital);
+        dietician.setEmail(dieticianDTO.getEmail());
+        dietician.setPassword(encodedPassword);
+        dietician = dieticianRepository.save(dietician);
+
+        for (Ward ward : wards) {
+            DieticianWard dieticianWard = new DieticianWard();
+            dieticianWard.setDietician(dietician);
+            dieticianWard.setWard(ward);
+            dieticianWardRepository.save(dieticianWard);
+        }
+        return dietician;
+    }
+
+    @Override
+    @SneakyThrows
+    public DieticianDetailsDTO uploadProfilePicture(Long id, MultipartFile picture) {
+        Dietician dietician = dieticianRepository.findDieticianById(id);
+
+        if (dietician == null) {
+            throw new DieticianNotFoundException(id);
+        }
+
+        byte[] pictureByte = picture.getBytes();
+        dieticianRepository.uploadPictureById(dietician.getId(), pictureByte);
+
+        return new DieticianDetailsDTO(
+                dietician.getId(),
+                dietician.getName(),
+                dietician.getSurname(),
+                dietician.getEmail(),
+                dietician.getHospital(),
+                Base64.getEncoder().encodeToString(pictureByte)
+        );
     }
 }

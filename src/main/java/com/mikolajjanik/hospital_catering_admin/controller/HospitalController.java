@@ -39,6 +39,12 @@ public class HospitalController {
         return hospitalService.findAll(pageable);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<Hospital>> getAllHospitalsList() {
+        List<Hospital> hospitals = hospitalService.findAllHospitalsList();
+        return new ResponseEntity<>(hospitals, HttpStatus.OK);
+    }
+
     @GetMapping("/search")
     public Page<HospitalDTO> getHospitalsByName(@RequestParam("name") String name, Pageable pageable) {
         return hospitalService.findByNameContaining(name, pageable);

@@ -99,6 +99,12 @@ public class HospitalServiceImpl implements HospitalService {
                 Base64.getEncoder().encodeToString(pictureByte)
         );
     }
+
+    @Override
+    public List<Hospital> findAllHospitalsList() {
+        return hospitalRepository.findAll();
+    }
+
     private Page<HospitalDTO> handleFindHospitals(Page<Hospital> hospitals, Pageable pageable) {
         List<HospitalDTO> hospitalsList = new ArrayList<>();
 

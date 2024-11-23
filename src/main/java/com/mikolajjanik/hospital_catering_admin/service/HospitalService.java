@@ -15,4 +15,5 @@ public interface HospitalService {
     List<Hospital> findAllHospitalsWithDieticians();
     HospitalDTO findHospitalById(Long id);
     HospitalDTO addHospital(NewHospitalDTO newHospitalDTO, MultipartFile picture);
+    List<Hospital> findAllHospitalsList();
 }
