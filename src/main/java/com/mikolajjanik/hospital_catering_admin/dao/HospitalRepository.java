@@ -9,9 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     Page<Hospital> findByNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrStreetContainingIgnoreCase(String name, String city, String street, Pageable pageable);
     Hospital findHospitalById(Long id);
+
+    @Query(value = "SELECT DISTINCT szpital.* FROM szpital JOIN dietetyk ON szpital.id=dietetyk.szpitalid WHERE dietetyk.szpitalid > 0", nativeQuery = true)
+    List<Hospital> findAllHospitalsWithDieticians();
     @Query(value = "SELECT zdjęcie FROM szpital WHERE id = :id", nativeQuery = true)
     byte[] findPictureById(@Param("id") Long id);
 

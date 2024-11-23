@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -47,6 +48,12 @@ public class HospitalController {
     public ResponseEntity<HospitalDTO> getHospitalById(@PathVariable("id") Long id) {
         HospitalDTO hospital = hospitalService.findHospitalById(id);
         return new ResponseEntity<>(hospital, HttpStatus.OK);
+    }
+
+    @GetMapping("/allWithDieticians")
+    public ResponseEntity<List<Hospital>> getAllHospitalsWithDieticians() {
+        List<Hospital> hospitals = hospitalService.findAllHospitalsWithDieticians();
+        return new ResponseEntity<>(hospitals, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/wards")

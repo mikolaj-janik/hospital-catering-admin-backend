@@ -1,5 +1,6 @@
 package com.mikolajjanik.hospital_catering_admin.service;
 
+import com.mikolajjanik.hospital_catering_admin.dao.DieticianRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.DieticianWardRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.HospitalRepository;
 import com.mikolajjanik.hospital_catering_admin.dao.WardRepository;
@@ -10,6 +11,7 @@ import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.DieticianWard;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
+import com.mikolajjanik.hospital_catering_admin.exception.DieticianNotFoundException;
 import com.mikolajjanik.hospital_catering_admin.exception.HospitalNotFoundException;
 import com.mikolajjanik.hospital_catering_admin.exception.WardNotFoundException;
 import lombok.SneakyThrows;
@@ -25,14 +27,19 @@ public class WardServiceImpl implements WardService {
 
     private final WardRepository wardRepository;
     private final HospitalRepository hospitalRepository;
+    private final DieticianRepository dieticianRepository;
     private final DieticianWardRepository dieticianWardRepository;
 
     private static final String POLISH_PHONE_EXTENSION = "+48 ";
 
     @Autowired
-    public WardServiceImpl(WardRepository wardRepository, HospitalRepository hospitalRepository, DieticianWardRepository dieticianWardRepository) {
+    public WardServiceImpl(WardRepository wardRepository,
+                           HospitalRepository hospitalRepository,
+                           DieticianRepository dieticianRepository,
+                           DieticianWardRepository dieticianWardRepository) {
         this.wardRepository = wardRepository;
         this.hospitalRepository = hospitalRepository;
+        this.dieticianRepository = dieticianRepository;
         this.dieticianWardRepository = dieticianWardRepository;
     }
 
@@ -57,7 +64,7 @@ public class WardServiceImpl implements WardService {
             throw new HospitalNotFoundException(id);
         }
 
-        return wardRepository.findWardsByHospitalId(id);
+        return wardRepository.findWardsByHospitalIdOrderByName(id);
     }
 
     @Override
@@ -159,5 +166,16 @@ public class WardServiceImpl implements WardService {
         ward.setPhoneNumber(phoneNumber);
 
         return wardRepository.save(ward);
+    }
+
+    @Override
+    @SneakyThrows
+    public List<Ward> findWardsByDieticianId(Long id) {
+        Dietician dietician = dieticianRepository.findDieticianById(id);
+
+        if (dietician == null) {
+            throw new DieticianNotFoundException(id);
+        }
+        return wardRepository.findWardsByDieticianId(id);
     }
 }

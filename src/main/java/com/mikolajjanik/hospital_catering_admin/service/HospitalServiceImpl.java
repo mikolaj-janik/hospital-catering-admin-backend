@@ -42,6 +42,11 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
+    public List<Hospital> findAllHospitalsWithDieticians() {
+        return hospitalRepository.findAllHospitalsWithDieticians();
+    }
+
+    @Override
     @SneakyThrows
     public HospitalDTO findHospitalById(Long id) {
         Hospital hospital = hospitalRepository.findHospitalById(id);

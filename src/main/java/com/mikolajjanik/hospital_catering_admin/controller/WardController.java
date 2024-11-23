@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -28,6 +29,11 @@ public class WardController {
         this.dieticianService = dieticianService;
     }
 
+    @GetMapping("")
+    public ResponseEntity<List<Ward>> getWardByDieticianId(@RequestParam("dieticianId") Long id) {
+        List<Ward> wards = wardService.findWardsByDieticianId(id);
+        return new ResponseEntity<>(wards, HttpStatus.OK);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Ward> getWardById(@PathVariable("id") Long id) {
         Ward ward = wardService.findWardById(id);
