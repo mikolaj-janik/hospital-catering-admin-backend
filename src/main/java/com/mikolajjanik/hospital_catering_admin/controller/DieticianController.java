@@ -48,4 +48,10 @@ public class DieticianController {
         DieticianDetailsDTO dietician = dieticianService.uploadProfilePicture(id, picture);
         return new ResponseEntity<>(dietician, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> uploadPicture(@PathVariable("id") Long id) {
+        dieticianService.deleteDieticianById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

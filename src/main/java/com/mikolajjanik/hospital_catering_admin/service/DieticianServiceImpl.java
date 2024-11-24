@@ -10,6 +10,7 @@ import com.mikolajjanik.hospital_catering_admin.entity.Dietician;
 import com.mikolajjanik.hospital_catering_admin.entity.DieticianWard;
 import com.mikolajjanik.hospital_catering_admin.entity.Hospital;
 import com.mikolajjanik.hospital_catering_admin.entity.Ward;
+import com.mikolajjanik.hospital_catering_admin.exception.CannotDeleteDieticianException;
 import com.mikolajjanik.hospital_catering_admin.exception.DieticianNotFoundException;
 import com.mikolajjanik.hospital_catering_admin.exception.HospitalNotFoundException;
 import com.mikolajjanik.hospital_catering_admin.exception.WardNotFoundException;
@@ -164,5 +165,22 @@ public class DieticianServiceImpl implements DieticianService {
                 dietician.getHospital(),
                 Base64.getEncoder().encodeToString(pictureByte)
         );
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteDieticianById(Long id) {
+        Dietician dietician = dieticianRepository.findDieticianById(id);
+
+        if (dietician == null) {
+            throw new DieticianNotFoundException(id);
+        }
+
+        List<Ward> wards = wardRepository.findWardsByDieticianId(id);
+
+        if (!wards.isEmpty()) {
+            throw new CannotDeleteDieticianException(id);
+        }
+        dieticianRepository.deleteById(id);
     }
 }

@@ -59,4 +59,10 @@ public class WardController {
         Ward ward = wardService.updateWard(wardDTO);
         return new ResponseEntity<>(ward, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> uploadPicture(@PathVariable("id") Long id) {
+        wardService.deleteWardById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

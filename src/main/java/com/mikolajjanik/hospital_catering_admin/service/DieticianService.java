@@ -15,4 +15,5 @@ public interface DieticianService {
     List<Dietician> findAllDieticians(Long hospitalId);
     Dietician registerNewDietician(DieticianDTO dieticianDTO);
     DieticianDetailsDTO uploadProfilePicture(Long id, MultipartFile picture);
+    void deleteDieticianById(Long id);
 }

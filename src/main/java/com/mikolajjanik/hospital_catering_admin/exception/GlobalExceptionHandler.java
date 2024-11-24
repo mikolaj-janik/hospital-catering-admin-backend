@@ -174,4 +174,16 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CannotDeleteDieticianException.class)
+    public ResponseEntity<ErrorResponse> handleCannotDeleteDieticianException(CannotDeleteDieticianException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CannotDeleteWardException.class)
+    public ResponseEntity<ErrorResponse> handleCannotDeleteWardException(CannotDeleteWardException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -14,4 +14,5 @@ public interface WardService {
     Ward createWard(NewWardDTO wardDTO);
     Ward updateWard(UpdateWardDTO wardDTO);
     List<Ward> findWardsByDieticianId(Long id);
+    void deleteWardById(Long id);
 }
