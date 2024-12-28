@@ -27,11 +27,8 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
     private final JWTService service;
-
     private final ApplicationContext context;
-
     private final List<String> excludeUrls = List.of("/api/register", "/api/login", "/api/refresh");
 
     @Autowired
